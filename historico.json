@@ -1,0 +1,44 @@
+[
+    {
+        "data": "2025-11-17 17:46:47",
+        "pergunta_usuario": "teste teste teste",
+        "resposta_bot": "Desculpe, não entendi. Tente palavras mais simples ou contate a secretaria.",
+        "intencao": "nao_entendeu",
+        "confianca": 40
+    },
+    {
+        "data": "2025-11-17 17:47:14",
+        "pergunta_usuario": "onde fica",
+        "resposta_bot": "📍 **Nosso Endereço:**\nEstamos localizados na Rua das Flores, 123 - Centro.",
+        "intencao": "localizacao",
+        "confianca": 100
+    },
+    {
+        "data": "2025-11-17 17:47:21",
+        "pergunta_usuario": "como entrar para cursar as aulas",
+        "resposta_bot": "📝 **Sobre as Inscrições:**\nAs matrículas para novas turmas abrem sempre em **Janeiro e Julho**.\n\nÉ necessário trazer RG, CPF e comprovante de residência para fazer o cadastro presencial.",
+        "intencao": "inscricao",
+        "confianca": 100
+    },
+    {
+        "data": "2025-11-17 17:47:36",
+        "pergunta_usuario": "quanto custa as aulas?",
+        "resposta_bot": "💰 **O curso é 100% gratuito!**\nNossa ONG oferece as aulas sem custo para alunos de baixa renda.",
+        "intencao": "custo",
+        "confianca": 100
+    },
+    {
+        "data": "2025-11-17 17:47:51",
+        "pergunta_usuario": "o bagulho é doido mermao ",
+        "resposta_bot": "Desculpe, não entendi. Tente palavras mais simples ou contate a secretaria.",
+        "intencao": "nao_entendeu",
+        "confianca": 39
+    },
+    {
+        "data": "2025-11-17 17:47:55",
+        "pergunta_usuario": "VOU PEGAR MINHA MARRETA",
+        "resposta_bot": "Desculpe, não entendi. Tente palavras mais simples ou contate a secretaria.",
+        "intencao": "nao_entendeu",
+        "confianca": 42
+    }
+]

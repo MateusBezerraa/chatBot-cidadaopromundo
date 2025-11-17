@@ -1,42 +1,60 @@
 import chainlit as cl
 import json
 import unicodedata
+import os
+from datetime import datetime
 from fuzzywuzzy import process, fuzz
 
 # --- CONFIGURAÇÃO ---
-# Ajustado para 70 para aceitar melhor frases naturais
-THRESHOLD_CONFIANCA = 70  
+THRESHOLD_CONFIANCA = 70
+ARQUIVO_HISTORICO = "historico.json"
 
 def normalizar_texto(texto):
-    """
-    Remove acentos e deixa tudo minúsculo.
-    Ex: "Horário" vira "horario"
-    """
-    if not texto:
-        return ""
-    # Normaliza para formulário NFD (separa letras de acentos)
+    if not texto: return ""
     texto_normalizado = unicodedata.normalize('NFD', texto)
-    # Filtra apenas caracteres que não são acentos e converte para minúsculo
     return "".join([c for c in texto_normalizado if unicodedata.category(c) != 'Mn']).lower()
 
 def carregar_regras():
     try:
         with open('regras.json', 'r', encoding='utf-8') as f:
             dados = json.load(f)
-            # Normaliza as palavras-chave do banco assim que carrega
             for regra in dados:
                 regra['palavras_chave'] = [normalizar_texto(p) for p in regra['palavras_chave']]
             return dados
-    except Exception as e:
-        print(f"Erro ao carregar: {e}")
+    except Exception:
         return []
 
 base_de_conhecimento = carregar_regras()
 
+# --- NOVA FUNÇÃO DE LOG ---
+def salvar_log(pergunta, resposta, intencao_detectada, pontuacao):
+    """Salva a interação no arquivo JSON para o Dashboard ler depois."""
+    novo_registro = {
+        "data": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "pergunta_usuario": pergunta,
+        "resposta_bot": resposta,
+        "intencao": intencao_detectada, # Ex: 'horarios', 'custo' ou 'nao_entendeu'
+        "confianca": pontuacao
+    }
+
+    # Lê o arquivo existente ou cria uma lista vazia
+    if os.path.exists(ARQUIVO_HISTORICO):
+        with open(ARQUIVO_HISTORICO, 'r', encoding='utf-8') as f:
+            try:
+                historico = json.load(f)
+            except:
+                historico = []
+    else:
+        historico = []
+
+    historico.append(novo_registro)
+
+    # Salva de volta
+    with open(ARQUIVO_HISTORICO, 'w', encoding='utf-8') as f:
+        json.dump(historico, f, ensure_ascii=False, indent=4)
+
 def buscar_melhor_resposta(pergunta_usuario):
-    # Normaliza a pergunta do usuário também
     pergunta_tratada = normalizar_texto(pergunta_usuario)
-    
     todas_chaves = []
     mapa_chaves = {}
 
@@ -45,38 +63,29 @@ def buscar_melhor_resposta(pergunta_usuario):
             todas_chaves.append(chave)
             mapa_chaves[chave] = regra
 
-    # Usa fuzz.partial_token_set_ratio que é mais permissivo com frases longas
-    melhor_match, pontuacao = process.extractOne(
-        pergunta_tratada, 
-        todas_chaves, 
-        scorer=fuzz.token_set_ratio
-    )
-
-    # Debug no terminal para você ajustar se precisar
-    print(f"Entrada Original: '{pergunta_usuario}'")
-    print(f"Entrada Tratada: '{pergunta_tratada}'")
-    print(f"Match: '{melhor_match}' | Score: {pontuacao}")
-    print("-" * 30)
+    melhor_match, pontuacao = process.extractOne(pergunta_tratada, todas_chaves, scorer=fuzz.token_set_ratio)
 
     if pontuacao >= THRESHOLD_CONFIANCA:
-        return mapa_chaves[melhor_match]['resposta']
+        regra = mapa_chaves[melhor_match]
+        # Retorna a resposta E o ID da intenção (ex: 'horarios')
+        return regra['resposta'], regra['id'], pontuacao
     
-    return None
+    return None, "nao_entendeu", pontuacao
 
 @cl.on_chat_start
 async def start():
-    await cl.Message(content="👋 Olá! Sou o assistente da ONG.\nPergunte sobre **inscrições**, **aulas**, **certificados** ou **localização**.").send()
+    await cl.Message(content="👋 Olá! Sou o assistente da ONG.").send()
 
 @cl.on_message
 async def main(message: cl.Message):
-    resposta = buscar_melhor_resposta(message.content)
+    resposta_texto, intencao_id, score = buscar_melhor_resposta(message.content)
 
-    if resposta:
-        await cl.Message(content=resposta).send()
+    if resposta_texto:
+        msg_final = resposta_texto
     else:
-        msg_fallback = (
-            "Desculpe, não entendi. 😕\n"
-            "Tente usar palavras-chave simples como: 'horários', 'preço', 'certificado' ou 'endereço'.\n\n"
-            "Ou contate a secretaria: (11) 99999-9999"
-        )
-        await cl.Message(content=msg_fallback).send()
+        msg_final = "Desculpe, não entendi. Tente palavras mais simples ou contate a secretaria."
+    
+    # --- AQUI SALVAMOS O LOG ---
+    salvar_log(message.content, msg_final, intencao_id, score)
+
+    await cl.Message(content=msg_final).send()

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "saudacao",
+    "palavras_chave": ["ola", "oi", "bom dia", "boa tarde", "ajuda", "alo"],
+    "resposta": "Olá! Sou o assistente virtual da ONG. Posso tirar dúvidas sobre **inscrições**, **horários**, **certificados** e **valores**. O que deseja saber?"
+  },
+  {
+    "id": "inscricao",
+    "palavras_chave": ["matricula", "inscrever", "entrar", "vaga", "inscricao", "documentos", "participar", "cadastro"],
+    "resposta": "📝 **Sobre as Inscrições:**\nAs matrículas para novas turmas abrem sempre em **Janeiro e Julho**.\n\nÉ necessário trazer RG, CPF e comprovante de residência para fazer o cadastro presencial."
+  },
+  {
+    "id": "custo",
+    "palavras_chave": ["preco", "valor", "custa", "pagar", "mensalidade", "boleto", "gratis", "gratuito"],
+    "resposta": "💰 **O curso é 100% gratuito!**\nNossa ONG oferece as aulas sem custo para alunos de baixa renda."
+  },
+  {
+    "id": "horarios",
+    "palavras_chave": ["horario", "horas", "dias", "semana", "sabado", "noite", "manha", "tarde", "turno", "aula", "aulas"],
+    "resposta": "⏰ **Nossos Horários:**\nAs aulas ocorrem de **Segunda a Quinta**.\n- Manhã: 08h às 10h\n- Tarde: 14h às 16h\n- Noite: 19h às 21h"
+  },
+  {
+    "id": "localizacao",
+    "palavras_chave": ["fica", "endereco", "local", "chegar", "mapa", "rua", "bairro"],
+    "resposta": "📍 **Nosso Endereço:**\nEstamos localizados na Rua das Flores, 123 - Centro."
+  },
+  {
+    "id": "certificado",
+    "palavras_chave": ["certificado", "diploma", "conclusao", "mec", "formar", "formatura"],
+    "resposta": "🎓 **Sobre o Certificado:**\nAo final do curso, emitimos um certificado de conclusão de curso livre (válido como horas complementares), mas **não** possuímos vínculo direto com o MEC para cursos de graduação."
+  }
+]
